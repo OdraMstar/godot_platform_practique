@@ -1,0 +1,74 @@
+[gd_scene load_steps=7 format=3 uid="uid://ck2y4hbvmrf3"]
+
+[ext_resource type="Script" path="res://scenes/level/levelController.gd" id="1_mgah6"]
+[ext_resource type="PackedScene" uid="uid://decrin8n7eaaw" path="res://scenes/objects/character.tscn" id="1_mmflf"]
+[ext_resource type="PackedScene" uid="uid://bmt04100oxgi4" path="res://scenes/objects/platform.tscn" id="2_evd4d"]
+[ext_resource type="PackedScene" uid="uid://cuaxscc46oyrg" path="res://scenes/objects/win_condition.tscn" id="3_sfbit"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_csfuw"]
+font_size = 346
+
+[sub_resource type="LabelSettings" id="LabelSettings_rcfrh"]
+font_size = 106
+
+[node name="level" type="Node2D"]
+script = ExtResource("1_mgah6")
+
+[node name="platforms" type="Node2D" parent="."]
+
+[node name="StaticBody2D" parent="platforms" instance=ExtResource("2_evd4d")]
+position = Vector2(337, 428)
+scale = Vector2(77.06, 5.925)
+
+[node name="StaticBody2D2" parent="platforms" instance=ExtResource("2_evd4d")]
+position = Vector2(1802, 351)
+scale = Vector2(77.06, 5.925)
+
+[node name="StaticBody2D3" parent="platforms" instance=ExtResource("2_evd4d")]
+position = Vector2(2320, 77)
+scale = Vector2(77.06, 5.925)
+
+[node name="StaticBody2D4" parent="platforms" instance=ExtResource("2_evd4d")]
+position = Vector2(1634, 254)
+scale = Vector2(15.86, 5.925)
+
+[node name="win_condition" parent="." instance=ExtResource("3_sfbit")]
+position = Vector2(1916, -47)
+scale = Vector2(10.79, 9.33)
+
+[node name="voidMarker" type="Marker2D" parent="."]
+position = Vector2(420, 664)
+
+[node name="CharacterBody2D" parent="." instance=ExtResource("1_mmflf")]
+position = Vector2(243, 316)
+scale = Vector2(0.5, 0.5)
+
+[node name="Camera2D" type="Camera2D" parent="CharacterBody2D"]
+position = Vector2(736, -386)
+
+[node name="victory_ui" type="Control" parent="CharacterBody2D"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -306.0
+offset_top = -636.0
+offset_right = -266.0
+offset_bottom = -596.0
+
+[node name="Label" type="Label" parent="CharacterBody2D/victory_ui"]
+layout_mode = 0
+offset_left = -972.0
+offset_top = -342.0
+offset_right = 2861.0
+offset_bottom = 605.0
+text = "Level
+Completed!"
+label_settings = SubResource("LabelSettings_csfuw")
+horizontal_alignment = 1
+
+[node name="Label" type="Label" parent="."]
+offset_left = 583.0
+offset_top = 63.0
+offset_right = 678.0
+offset_bottom = 209.0
+text = "->"
+label_settings = SubResource("LabelSettings_rcfrh")

@@ -12,6 +12,9 @@ enum State
 const SPEED = 300.0
 const JUMP_VELOCITY = -40000.0
 
+@export var timeAttack :float = 0.3
+@export var timeDecay :float = 0.1
+
 var double_jump_active = false
 var current_state = State.RELEASE
 var timer  : float = 0.0
@@ -22,7 +25,7 @@ func _physics_process(delta):
 
 	if( current_state == State.ATTACK):
 		#print(current_state)
-		if( timer<=0.3 ):
+		if( timer<=timeAttack ):
 			velocity.y += JUMP_VELOCITY * delta * timer
 			pass
 		else:
@@ -31,7 +34,7 @@ func _physics_process(delta):
 			velocity.y = 0
 		pass
 	if( current_state == State.DECAY):
-		if( timer<=0.1 ):
+		if( timer<=timeDecay):
 			velocity.y -= JUMP_VELOCITY * delta * timer
 			pass
 		else:

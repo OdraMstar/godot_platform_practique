@@ -1,74 +1,68 @@
 extends CharacterBody2D
-
-enum State
-{
-	FLOOR,
-	ATTACK,
-	DECAY,
-	SUSTAIN,
-	RELEASE,
-} 
+class_name Player
 
 const SPEED = 300.0
-const JUMP_VELOCITY = -40000.0
+const JUMP_VELOCITY = -6000.0
 
 @export var timeAttack :float = 0.3
 @export var timeDecay :float = 0.1
 
 var double_jump_active = false
-var current_state = State.RELEASE
 var timer  : float = 0.0
 
-func _physics_process(delta):
-	# Add the gravity.
-	timer += delta
+var state : State
+var state_floor_ : StateFloor
 
-	if( current_state == State.ATTACK):
-		#print(current_state)
-		if( timer<=timeAttack ):
-			velocity.y += JUMP_VELOCITY * delta * timer
-			pass
-		else:
-			timer = 0
-			current_state = State.DECAY
-			velocity.y = 0
-		pass
-	if( current_state == State.DECAY):
-		if( timer<=timeDecay):
-			velocity.y -= JUMP_VELOCITY * delta * timer
-			pass
-		else:
-			timer = 0;
-			current_state = State.SUSTAIN
-		pass
-	if(current_state == State.SUSTAIN && Input.is_action_pressed("jump")):
-		timer = 0;
-		velocity.y = 0
-		pass
-	if(current_state == State.SUSTAIN && not Input.is_action_pressed("jump")):
-		timer = 0
-		velocity.y = 0
-		current_state = State.RELEASE
+var jump_pressed :bool = false
+func _ready():
+	initialize_state_jump()
 	
-	if not is_on_floor() && (current_state == State.RELEASE || current_state == State.FLOOR):
-		velocity += get_gravity() * (timer ** 2) * delta
-		pass
+	pass
+func _physics_process(delta):
 	
-	if is_on_floor():
-		timer = 0
-		current_state = State.FLOOR
-		pass
+	timer += delta
+	
+	if(Input.is_action_pressed("jump")):
+		jump_pressed = true
+	else:
+		jump_pressed = false
 		
-	# Handle jump.
-	if Input.is_action_pressed("jump") and (current_state == State.FLOOR && is_on_floor()) :
-		double_jump_active = true
-		current_state = State.ATTACK
-		#print(current_state)
-		pass
+		
+	
+	state = state.get_next_state()
+	state.calculated_speed()
+
+			
 	var direction = Input.get_axis("left", "right")
 	if direction:
 		velocity.x = direction * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
-
+		
 	move_and_slide()
+
+func initialize_state_jump():
+	var state_attack = StateAttack.new()
+	var state_decay = StateDecay.new()
+	var state_sustain = StateSustain.new()
+	var state_release = StateRelease.new()
+	var state_floor = StateFloor.new()
+	
+	state_attack.player = self
+	state_decay.player = self
+	state_sustain.player = self
+	state_release.player = self
+	state_floor.player = self
+	
+	state_attack.next_state = state_decay
+	state_decay.next_state = state_sustain
+	state_sustain.next_state = state_release
+	state_release.next_state = state_floor
+	state_floor.next_state = state_attack
+	
+	state_attack.time_limit = timeAttack
+	state_decay.time_limit = timeDecay
+	
+	state=state_release
+	state_floor_ = state_floor
+	pass
